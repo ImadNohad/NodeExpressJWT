@@ -1,16 +1,17 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const cookieParser = require('cookie-parser');
-var cors = require('cors')
+const cookieParser = require("cookie-parser");
+var cors = require("cors");
 
 const dbConnection = require("./dbConnection");
 const isAuthenticated = require("./isAuthenticated");
+const { ObjectId } = require("mongodb");
 const app = express();
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors())
+app.use(cors());
 require("dotenv").config();
 
 let db = dbConnection();
@@ -33,11 +34,9 @@ app.post("/register", async (req, res) => {
     .then((user) => {
       res.status(200).json({
         userId: user._id,
-        token: jwt.sign(
-          { userId: user._id },
-          process.env.RANDOM_TOKEN_SECRET,
-          { expiresIn: "24h" }
-        ),
+        token: jwt.sign({ userId: user._id }, process.env.RANDOM_TOKEN_SECRET, {
+          expiresIn: "24h",
+        }),
       });
     })
     .catch((error) => res.status(500).json(error));
@@ -50,7 +49,8 @@ app.post("/login", (req, res) => {
       if (!user)
         return res.status(401).json({ error: "Utilisateur non trouvé !" });
 
-      bcrypt.compare(req.body.password, user.password)
+      bcrypt
+        .compare(req.body.password, user.password)
         .then((valid) => {
           if (!valid)
             return res.status(401).json({ error: "Mot de passe incorrect !" });
@@ -70,6 +70,18 @@ app.post("/login", (req, res) => {
 });
 
 app.get("/products", isAuthenticated, (req, res) => {
+  dbProducts
+    .find()
+    .toArray()
+    .then((docs) => {
+      res.status(200).json(docs);
+    })
+    .catch((error) => res.status(500).json(error));
+});
+
+app.delete("/products/:id", isAuthenticated, (req, res) => {
+  dbProducts.deleteOne({ _id : new ObjectId(req.params.id) });
+
   dbProducts
     .find()
     .toArray()

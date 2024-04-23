@@ -1,17 +1,23 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useCookies } from "react-cookie";
 
-const Login = ({ onLogin }) => {
+const Login = ({ onLogin, isAuthenticated }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const [error, setError] = useState("");
   const [cookies, setCookie] = useCookies(["access_token"]);
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/products");
+    }
+  });
+
   const handleSubmit = async (e) => {
-    let response
+    let response;
     e.preventDefault();
     try {
       response = await axios.post("http://127.0.0.1:82/login", {
@@ -22,7 +28,7 @@ const Login = ({ onLogin }) => {
       onLogin();
       navigate("/products");
     } catch (error) {
-        setError(error.response.data.error);
+      setError(error.response.data.error);
     }
   };
 

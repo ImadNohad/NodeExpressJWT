@@ -25,7 +25,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Login onLogin={handleLogin} />} />
+        <Route path="/" element={<Login onLogin={handleLogin} isAuthenticated={isLoggedIn} />} />
         <Route
           path="/register"
           element={<Register onRegister={handleLogin} />}

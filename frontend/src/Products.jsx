@@ -16,7 +16,7 @@ const Products = ({ onLogout }) => {
         const token = cookies.access_token;
         const response = await axios.get("http://127.0.0.1:82/products", {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `${token}`,
           },
         });
         setData(response.data);

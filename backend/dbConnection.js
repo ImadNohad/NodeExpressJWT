@@ -18,4 +18,5 @@ const dbConnection = () => {
   }
   return db;
 };
+
 module.exports = dbConnection;

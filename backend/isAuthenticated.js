@@ -8,7 +8,7 @@ let dbUsers = db.collection("users");
 
 const isAuthenticated = (req, res, next) => {
   try {
-    const token = req.headers?.authorization?.replace("Bearer ", "");
+    const token = req.headers?.authorization;
     if (!token) {
       return res.status(401).json("Please login to access the data");
     }

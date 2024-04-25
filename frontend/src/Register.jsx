@@ -14,23 +14,26 @@ const Register = ({ onRegister }) => {
   const navigate = useNavigate();
   const [cookies, setCookie] = useCookies(["access_token"]);
 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    let response
     if (password !== confirmPassword) {
       setError("Passwords do not match");
       return;
     }
     try {
-      const response = await axios.post("http://127.0.0.1:82/register", {
+      response = await axios.post("http://127.0.0.1:82/register", {
         username,
         email,
         password,
       });
-      setCookie("access_token", response.data.token, { path: "/" });
+      setCookie("access_token", response.data.token, { path: "/", httpOnly : false });
       onRegister();
       navigate("/products");
     } catch (error) {
-      setError(response.data.error);
+      console.log(response)
+      setError(error.response.data.error);
     }
   };
 
